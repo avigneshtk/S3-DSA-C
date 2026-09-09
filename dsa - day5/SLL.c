@@ -9,7 +9,7 @@ struct node
 
 void insbeg(int value);
 void insend(int value);
-void inspos(int value, int pos);
+void inspos();
 void delbeg();
 void delend();
 void delpos();
@@ -18,11 +18,10 @@ void display();
 int main()
 {
     int op,value,pos;
-    char ch;
     
     do
     {
-    printf("--MENU--\n1)insertion at the beginning\n2)insertion at the end\n3)insertion at a particular position\n4)deletion at the beginning\n5)deletion at the end\n6)deletion at a particular position\n7)display\n8)exit\n");
+    printf("\n--MENU--\n1)insertion at the beginning\n2)insertion at the end\n3)insertion at a particular position\n4)deletion at the beginning\n5)deletion at the end\n6)deletion at a particular position\n7)display\n8)exit\n");
 
     printf("Enter the operation do you want to perform on SLL:");
     scanf("%d",&op);
@@ -42,9 +41,7 @@ int main()
             break;
 
         case 3:
-            printf("Enter the value and position where you want to insert:");
-            scanf("%d%d",&value,&pos);
-            inspos(value,pos);
+            inspos();
             break;
 
         case 4:
@@ -71,10 +68,7 @@ int main()
             printf("No such operation found");
     }
 
-    printf("\nDo you wan to continue?(y/n):");
-    scanf(" %c",&ch);
-
-}while(ch=='y' || ch=='Y');
+}while(1);
    
     
     return 0;
@@ -121,38 +115,48 @@ void insend(int value)
     }
 }
 
-void inspos(int value, int pos)
+void inspos()
 {
-    int i,count = 0;
+    int pos,value,count=0,i;
+    
+    printf("Enter the position and value to be insert:");
+    scanf("%d%d",&pos,&value);
 
-    new = (struct node*) malloc(sizeof(struct node));
-    new->data = value;
-    new->link = NULL;
+    ptr = head;
+    while(ptr!=NULL)//counting the nodes
+    {
+        count++;
+        ptr = ptr->link;
+    }
+
     if(pos==1)
     {
         insbeg(value);
     }
-
-    else//pos!=1
+    else
     {
-        ptr = head;
-        for(i=1;i<pos-1;i++)
-        {
-            ptr = ptr->link;
-            count++;
-        }
-        if(pos>count+1)
+        if(pos<1 || pos > count+1)
         {
             printf("Invalid position");
         }
+
         else
         {
+            new = (struct node*) malloc(sizeof(struct node));
+            new->data = value;
+            new->link = NULL;
+
+            ptr = head;
+            for(i=1;i<pos-1;i++)
+            {
+                ptr = ptr->link;
+            }
             new->link = ptr->link;
             ptr->link = new;
         }
     }
-
 }
+
 
 void delbeg()
 {
@@ -225,19 +229,25 @@ void delpos()
         else//pos!=1
         {
             ptr = head;
-            for(i=1;i<pos-1;i++)
+            while(ptr!=NULL)
             {
-                ptr = ptr->link;
                 count++;
+                ptr = ptr->link;
             }
-
-            if(pos>count+1)
+            ptr = NULL;
+            
+            if(pos<=0 || pos>count)
             {
                 printf("Invalid position");
             }
 
             else
             {
+                ptr = head;
+                for(i=1;i<pos-1;i++)
+                {
+                    ptr = ptr->link;
+                }
                 temp = ptr->link;
                 printf("Deleted value = %d",temp->data);
                 ptr->link = temp->link;
